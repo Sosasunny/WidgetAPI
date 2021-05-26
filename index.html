@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--<script src="fetch.js"></script>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WidgetAPI</title>
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    .container {
+        margin: auto;
+    }
+    
+    .column {
+        column-count: 3;
+        float: left;
+        width: 33.33%;
+        height: auto;
+    }
+    
+    #row_1 {
+        content: " ";
+        display: table;
+        clear: both;
+    }
+    
+    #row_2 {
+        content: " ";
+        display: table;
+        clear: both;
+    }
+    
+    .branding {
+        font-family: Arial, Helvetica, sans-serif;
+        display: inline-block;
+        font-size: 15px;
+        text-decoration: none;
+        color: grey;
+        font-weight: bold;
+    }
+    
+    figure {
+        display: inline-block;
+    }
+    
+    figcaption {
+        color: teal;
+        font-style: initial;
+        text-decoration: underline white;
+        font-weight: bold;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+        position: relative;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    img {
+        width: 350px;
+        height: 250px;
+        border: 1px solid grey;
+    }
+    
+    @media screen and (max-width: 800px) {
+        .column {
+            width: 100%;
+        }
+    }
+    
+    .header {
+        margin-left: -320px;
+        position: fixed;
+        left: 50%;
+        top: 0;
+        padding: 0px;
+        width: 640px;
+        z-index: 1;
+        display: block;
+        overflow: hidden;
+        background-color: none;
+        height: 40px;
+    }
+    
+    .header a {
+        color: black;
+        float: left;
+        text-align: center;
+        padding: 12px;
+        text-decoration: none;
+        font-size: 18px;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        line-height: 10px;
+    }
+    
+    .header a.logo {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .header a.active {
+        background-color: lightgrey;
+        color: white;
+    }
+    
+    .header-right {
+        float: right;
+    }
+    
+    @media only screen and (max-width:300px) {
+        .header {
+            min-height: 40px;
+        }
+    }
+    
+    .spacer {
+        width: 100%;
+        height: 55px;
+    }
+    
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-weight: bold;
+        font-size: 10px;
+        color: lightslategrey;
+        background-color: none;
+        height: 35px;
+        line-height: 25px;
+    }
+    
+    h4 {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        color: lightslategrey;
+        border: 3px dashed #ccc;
+    }
+</style>
+
+<body>
+    <script>
+        //api url
+        const api_url = "https://api.taboola.com/1.2/json/apitestaccount/recommendations.get?app.type=web&app.apikey=7be65fc78e52c11727793f68b06d782cff9ede3c&source.id=%2Fdigiday-publishing-summit%2F&source.url=https%3A%2F%2Fblog.taboola.com%2Fdigiday-publishing-summit%2F&source.type=text&placement.organic-type=mix&placement.visible=true&placement.available=true&placement.rec-count=6&placement.name=Below%20Article%20Thumbnails&placement.thumbnail.width=640&placement.thumbnail.height=480&user.session=init";
+
+        //Defining async function 
+        async function getapi(url) {
+
+            //Storing response
+            const response = await fetch(url);
+
+            //storing data inform of JSON
+            var data = await response.json();
+            console.log(data);
+            if (response) {
+                hideloader();
+            }
+            show(data);
+
+        }
+        //Calling that async function
+        getapi(api_url);
+
+        //Function hideloader()
+        function hideloader() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        //Function to define innerHTML for HTML widget
+        function show(data) {
+            console.log("show data: ", data);
+
+            let tab =
+
+                `<div id="row_1">
+            `;
+
+            //loop to access all content of the page
+
+            for (let item of data.list) {
+                tab += `<div class="column">
+                <figure>
+                <h4>${item.categories}</h4>
+                <a href="${item.url}">
+                <img src="${item.thumbnail[0].url}"></>
+                <figcaption>${item.name}</figcaption>
+                <span class="branding">${item.branding}</span></a>
+                </figure>
+                </div> `;
+            }
+            tab += ` </div> `;
+
+            //setting innerHTML as tab variable
+            document.getElementById("row_1").innerHTML = tab;
+
+
+        }
+    </script>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status" id="loading">
+            <span class="sr-only">Loading....</span>
+        </div>
+    </div>
+    <div class="header">
+        <a href="#default" class="logo">
+            Trending News
+        </a>
+        <div class="header-right">
+            <a class="active" href="#home">Home</a>
+            <a href="#contact">Contact</a>
+            <a href="#about">About</a>
+            <a href="#links" style="font-size:10px;">
+                Sponsored Links by Taboola
+            </a>
+
+        </div>
+    </div>
+    <div class="spacer">
+        &nbsp;
+    </div>
+    <!--row to show data-->
+    <div class="container">
+
+        <div id="row_1">
+
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; Taboola
+    </div>
+
+
+</body>
+
+</html>
